@@ -2,10 +2,31 @@ import React from 'react';
 import List from '../List';
 import Badge from '../Badge';
 
+import closeSvg from '../../assets/img/close.svg';
+
 import './AddList.scss';
 
-const AddList = ({ colors }) => {
+const AddList = ({ colors, onAdd }) => {
   const [visiblePopup, setVisiblePopup] = React.useState(false);
+  const [selectedColor, selectColor] = React.useState(colors[0].id);
+  const [inputValue, setInputValue] = React.useState('');
+
+  const addList = () => {
+    if (!inputValue) {
+      alert('Add listname');
+      return;
+    }
+
+    const color = colors.filter((c) => c.id === selectedColor)[0].name;
+    onAdd({ id: Math.random(), name: inputValue, color });
+    onClose();
+  };
+
+  const onClose = () => {
+    setVisiblePopup(false);
+    setInputValue('');
+    selectColor(colors[0].id);
+  };
   return (
     <div className="add-list">
       <List
@@ -48,7 +69,6 @@ const AddList = ({ colors }) => {
             alt="Close button"
             className="add-list__popup-close-btn"
           />
-
           <input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -63,12 +83,12 @@ const AddList = ({ colors }) => {
                 onClick={() => selectColor(color.id)}
                 key={color.id}
                 color={color.name}
-                className={seletedColor === color.id && 'active'}
+                className={selectedColor === color.id && 'active'}
               />
             ))}
           </div>
           <button onClick={addList} className="button">
-            {isLoading ? 'Добавление...' : 'Добавить'}
+            Add
           </button>
         </div>
       )}
